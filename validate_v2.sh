@@ -144,8 +144,8 @@ for FILE in "$dir_1"/*; do
     ((num_instances_comp++))
 
     #compare result
-    char_1 = ${result_1:0:1}
-    char_2 = ${result_2:0:1}
+    char_1=${result_1:0:1}
+    char_2=${result_2:0:1}
     if [ "$char_1" = "$char_2" ]; then
         ((num_same_result++))
     else
