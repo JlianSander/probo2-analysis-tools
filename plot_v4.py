@@ -71,15 +71,15 @@ if __name__ == "__main__":
     for name, group in grouped_dataframe:
         num_rows = len(group)
         timeouts = group["runtime"].eq(timeout).sum()
-        errors_nb = group["runtime"].apply(lambda x: (x > timeout).sum())
-        errors_rt = group["runtime"].apply(lambda x: (x > timeout)["runtime"].sum())
-        runtime_solved = group["runtime"].sum() - timeouts * timeout
-        average_runtime_solved = runtime_solved / (num_rows - timeouts)
         empty_runtime_rows = group['runtime'].isna().sum() + (group['runtime'] == '').sum()
-        timeouts += empty_runtime_rows
-        average_runtime = (group["runtime"].sum() + empty_runtime_rows * timeout )/ num_rows
-        par_X = (runtime_solved + (timeouts * X_in_parX * timeout)) / num_rows
-        table_data.append([name, num_rows, timeouts, round(runtime_solved, 2), round(average_runtime_solved, 2),round(average_runtime, 2), par_X, errors_nb, errors_rt])
+        timeouts_all = timeouts + empty_runtime_rows
+        errors_nb = group["runtime"].apply(lambda x: (x > timeout)).sum()
+        errors_diff = group.loc[group["runtime"] > timeout, "runtime"].sum() - errors_nb * timeout
+        runtime_solved = group["runtime"].sum() - timeouts * timeout - errors_diff
+        average_runtime_solved = runtime_solved / (num_rows - timeouts_all)
+        average_runtime = (group["runtime"].sum() + empty_runtime_rows * timeout - errors_diff )/ num_rows
+        par_X = (runtime_solved + (timeouts_all * X_in_parX * timeout)) / num_rows
+        table_data.append([name, num_rows, timeouts, round(runtime_solved, 2), round(average_runtime_solved, 2),round(average_runtime, 2), par_X, errors_nb, errors_diff])
     table_df = pd.DataFrame(table_data, columns=["Algorithm", "N", "#TO", "RTslv", "avgRTslv", "avgRT", "PAR"+ str(X_in_parX), "#err", "RTerr"])
     
     # Save table to file
