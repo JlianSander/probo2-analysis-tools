@@ -24,7 +24,7 @@ if __name__ == "__main__":
     #Get input data from user
     file_path_raw = input("Enter file path of raw.csv: ")
     output_file = input("Enter file path of output directory: ")
-    input_cores = input("Enter number of cores used by the solvers, seperated by ' ':")
+    input_cores = input("Enter number of cores (incrementing) used by the solvers, seperated by ' ':")
     slvrs_cores = list(map(int,input_cores.split(' ')))
     #DEBUG ========================================================
     print("slvrs_cores: " + slvrs_cores)
@@ -33,8 +33,6 @@ if __name__ == "__main__":
     dataframe = read_csv_to_dataframe(file_path_raw)
     # Group DataFrame by the "name" column
     grouped_df_solvers = dataframe.groupby("solver_name")
-    
-
     
     # get array holding all names of the solvers
     names_solvers = grouped_df_solvers.groups.keys
@@ -47,8 +45,8 @@ if __name__ == "__main__":
     print(path_slvr_output)
     #==============================================================
 
-    csv_data = []
     #iterate through instances
+    csv_data = []
     for file_instance in os.listdir(path_slvr_output):
         filename_instance = os.fsdecode(file_instance)
         #DEBUG ========================================================
@@ -68,7 +66,7 @@ if __name__ == "__main__":
         print(df_instances)
         #==============================================================
         # choose solver with minimum RT
-        df_instances_min = df_instances[df_instances.runtime == df.runtime.min()]
+        df_instances_min = df_instances[df_instances.runtime == df_instances.runtime.min()]
         #DEBUG ========================================================
         print(df_instances_min)
         sys.exit(1)
@@ -78,8 +76,7 @@ if __name__ == "__main__":
         #DEBUG ========================================================
         print("nb_cores: " + nb_cores)
         #==============================================================
-        
-        # print in csv: instance_name, nb_args_after_coi, nb_cores
+        # save in csv_data: instance_name, nb_args_after_coi, nb_cores
         if not csv_data:
             csv_data = [{'solver_name': df_instances_min.solver_name, 'nb_args_after_coi' : nb_args_after_coi, 'nb_cores' : nb_cores}]
         else:
@@ -89,6 +86,7 @@ if __name__ == "__main__":
         sys.exit(1)
         #==============================================================
     
+    #write csv file
     with open('analysis_CvsRT.csv', 'w', newline='') as csvfile:
         fieldnames = ['solver_name', 'nb_args_after_coi', 'nb_cores']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
