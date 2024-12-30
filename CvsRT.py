@@ -47,6 +47,7 @@ if __name__ == "__main__":
     print(path_slvr_output)
     #==============================================================
 
+    csv_data = []
     #iterate through instances
     for file_instance in os.listdir(path_slvr_output):
         filename_instance = os.fsdecode(file_instance)
@@ -79,10 +80,18 @@ if __name__ == "__main__":
         #==============================================================
         
         # print in csv: instance_name, nb_args_after_coi, nb_cores
-
-        
+        if not csv_data:
+            csv_data = [{'solver_name': df_instances_min.solver_name, 'nb_args_after_coi' : nb_args_after_coi, 'nb_cores' : nb_cores}]
+        else:
+            csv_data.append({'solver_name': df_instances_min.solver_name, 'nb_args_after_coi' : nb_args_after_coi, 'nb_cores' : nb_cores})
         #DEBUG ========================================================
+        print("csv_data: " + csv_data)
         sys.exit(1)
         #==============================================================
-           
+    
+    with open('analysis_CvsRT.csv', 'w', newline='') as csvfile:
+        fieldnames = ['solver_name', 'nb_args_after_coi', 'nb_cores']
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(csv_data)       
     
