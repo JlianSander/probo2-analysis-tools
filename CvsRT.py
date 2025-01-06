@@ -103,7 +103,7 @@ if __name__ == "__main__":
         #============================================================== """
     
     #write csv file
-    path_csv_file = os.path.join(output_folder, 'analysis_CvsRT.csv')
+    path_csv_file = os.path.join(output_folder, 'raw_CvsRT.csv')
     with open(path_csv_file, 'w', newline='') as csvfile:
         fieldnames = ['instance', 'nb_args_after_coi', 'nb_cores', 'solver_name', 'runtime']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
