@@ -20,6 +20,7 @@ def write_arg_to_file(path, file_name, argument):
     f.close()
 
 input_folder = input("Enter path of the directory containing the label files: ")
+input_folder_frameworks = input("Enter path of the directory containing the .i23 files: ")
 output_folder = input("Enter path of the output directory: ")
 # create subfolders for accepted args and those which are not
 path_subfolder_accepted = create_folder(output_folder, "Accepted")
@@ -42,7 +43,7 @@ for file_input in os.listdir(input_folder):
     # open file and read arguments
     with open(file_path_input) as file:
         tmp_lines = file.readlines()
-        if len(tmp_lines) != 0:
+        if len(tmp_lines) != 0 and not tmp_lines[0].isspace():
             arg_str = tmp_lines[0]
             arg_int = int(arg_str.strip("a"))
             """ #DEBUG ========================================================
@@ -53,11 +54,15 @@ for file_input in os.listdir(input_folder):
             # iterate through all labeled arguments and create list with arguments
             list_accepted = list()
             for line in tmp_lines:
-                arg_int = int(arg_str.strip("a"))
+                arg_int = int(line.strip("a"))
                 list_accepted.append(arg_int)
             # save int in list and output args not in list but lower than max arg in list as "not accepted"
             list_accepted.sort(reverse=True)
             arg_max = list_accepted[0]
+            """ #DEBUG ========================================================
+            print("arg_max: " + str(arg_max))
+            print("list_accepted: " + str(list_accepted))
+            #============================================================== """
             has_empty_slot = False
             for i in range(arg_max - 1):
                 if not(list_accepted.__contains__(i)):
@@ -70,6 +75,19 @@ for file_input in os.listdir(input_folder):
                     arg_not_accepted = random.randint(arg_max - 1 , 0)
                 # write argument in file in subfolder of rejected arguments
                 write_arg_to_file(path_subfolder_rejected, name_instance, arg_not_accepted)
+            else:
+                # check if arg_max is highest argument in the framework
+                file_path_framework = os.path.join(input_folder_frameworks, name_instance + ".i23")
+                with open(file_path_framework) as file_framework:
+                    line_tmp = file_framework.readline().strip(' p ').strip(' af ').strip(' aba ')
+                    line_tmp = line_tmp.strip() # removes whitespaces
+                    num_args = int(line_tmp)
+                    """ #DEBUG ========================================================
+                    print("num_args: " + str(num_args))
+                    #============================================================== """
+                if arg_max < num_args:
+                    # there are arguments higher than arg_max in the framework, take next one higher as rejected
+                    write_arg_to_file(path_subfolder_rejected, name_instance, arg_max + 1)
                 
 
             
