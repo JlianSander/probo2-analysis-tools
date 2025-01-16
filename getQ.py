@@ -14,7 +14,7 @@ def create_folder(path, name):
     return path_subfolder
 
 def write_arg_to_file(path, file_name, argument):
-    filename_output = os.path.join(path,file_name + '.arg')
+    filename_output = os.path.join(path,file_name + '.af.arg')
     f = open(filename_output, "w")
     f.write(str(argument))
     f.close()
