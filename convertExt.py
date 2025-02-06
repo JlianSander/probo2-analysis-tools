@@ -8,9 +8,9 @@ def write_arg_to_file(path, file_name, name_ext, argument):
 
 
 input_folder = input("Enter path of the directory containing the files of the additional (query) arguments for DS/DC problems: ")
-name_ext_old = input("Enter the existing file ending of the additional arguments:")
-name_ext_new = input("Enter the new file ending of the additional arguments:")
-wrapping_argument = input("Enter any symbols that are used to describe the argument, apart of its number. (e.g. 'a'):")
+name_ext_old = input("Enter the existing file ending of the additional arguments: ")
+name_ext_new = input("Enter the new file ending of the additional arguments: ")
+wrapping_argument = input("Enter any symbols that are used to describe the argument, apart of its number. (e.g. 'a'): ")
 # iterate through files in folder
 for file_input in os.listdir(input_folder):
     filename_input = os.fsdecode(file_input)
