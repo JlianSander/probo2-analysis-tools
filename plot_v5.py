@@ -81,7 +81,24 @@ if __name__ == "__main__":
         sum_rt_correct = group["runtime"].sum() - delta_rt_too_high
 
         runtime_solved = sum_rt_correct - nb_timeout_counted * timeout
-        average_runtime_solved = runtime_solved / (nb_rows - nb_timeouts_all)
+        
+        """ print("name: ", name)
+        print("timeout: ", timeout)
+        print("nb_rows: ", nb_rows)
+        print("nb_timeouts: ", nb_timeouts)
+        print("nb_empty_runtime_rows: ", nb_empty_runtime_rows)
+        print("nb_rt_too_high: ", nb_rt_too_high)
+        print("nb_errors: ", nb_errors)
+        print("nb_timeout_counted: ", nb_timeout_counted)
+        print("nb_timeouts_all: ", nb_timeouts_all)
+        print("sum_rt_correct: ", sum_rt_correct)
+        print("delta_rt_too_high: ", delta_rt_too_high)
+        print("runtime_solved: ", runtime_solved)
+        print("----------------- End -----------------") """
+        if((nb_rows - nb_timeouts_all) > 0):
+            average_runtime_solved = runtime_solved / (nb_rows - nb_timeouts_all)
+        else:
+            average_runtime_solved =0
         average_runtime = (sum_rt_correct + nb_empty_runtime_rows * timeout)/ nb_rows
         par_X = (runtime_solved + (nb_timeouts_all * X_in_parX * timeout)) / nb_rows
         table_data.append([name, nb_rows, nb_timeouts, round(runtime_solved, 2), round(average_runtime_solved, 2),round(average_runtime, 2), par_X, nb_errors, delta_rt_too_high])
