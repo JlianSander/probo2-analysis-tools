@@ -41,13 +41,13 @@ function Check_Certificate () {
 
     #get extension from solver 1 (special files)           
     raw_ext_cc=$(sed -n {$next_line_result_solver_1',${p;}'} < $file_cc)
-    ext_cc=$(echo $raw_ext | sed -e s/'\r'/' '/g -e s/'\n'/' '/g) # parse extensions in several lines
+    ext_cc=$(echo $raw_ext_cc | sed -e s/'\r'/' '/g -e s/'\n'/' '/g) # parse extensions in several lines
 
     #echo "Raw_ext = $raw_ext_cc"
     #echo "Ext = $ext_cc"
             
     #check if extension in solver 1 is valid
-    if [  $(expr length "$ext") -lt 3 ]; then
+    if [  $(expr length "$ext_cc") -lt 3 ]; then
         echo "Empty Certificate: $file_raw_cc"
         echo "$result_cc $ext_cc"
         ((num_instance_empty_certificate++))
@@ -162,6 +162,7 @@ for FILE in "$dir_1"/*.out; do
 
     #read result of solver 1 (special files)
     result_1=$(sed {$num_line_result_solver_1"q;d"} < $FILE)
+
     # don't count aborted(empty) cases
     if [ -z "$result_1" ]; then
         echo "Empty File: $FILE"
