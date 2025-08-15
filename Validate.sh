@@ -22,14 +22,37 @@ num_instances_empty_1=0
 num_instances_empty_2=0
 #counter of instances with different soultions and solver 1 returned NO
 num_instance_diff_solver1_NO=0
+#counter of instances with empty certificate
+num_instance_empty_certificate=0
 
 #/////////////////////////////////////////////////////////////////////////////////////////
 #//////////////////////////////---- FUNC ----/////////////////////////////////////////////
 #/////////////////////////////////////////////////////////////////////////////////////////
 
-#function Check_Certificate () {
-    
-#}
+function Check_Certificate () {
+    file_cc=$1
+    file_raw_cc=${1##*/}
+    #echo "Check_Certificate"
+    #echo "File: $file_cc"
+    #echo "File Raw: $file_raw_cc"
+
+    #get result of this file
+    result_cc=$(sed {$num_line_result_solver_1"q;d"} < $file_cc)
+
+    #get extension from solver 1 (special files)           
+    raw_ext_cc=$(sed -n {$next_line_result_solver_1',${p;}'} < $file_cc)
+    ext_cc=$(echo $raw_ext | sed -e s/'\r'/' '/g -e s/'\n'/' '/g) # parse extensions in several lines
+
+    #echo "Raw_ext = $raw_ext_cc"
+    #echo "Ext = $ext_cc"
+            
+    #check if extension in solver 1 is valid
+    if [  $(expr length "$ext") -lt 3 ]; then
+        echo "Empty Certificate: $file_raw_cc"
+        echo "$result_cc $ext_cc"
+        ((num_instance_empty_certificate++))
+    fi
+}
 
 
 #/////////////////////////////////////////////////////////////////////////////////////////
@@ -52,10 +75,11 @@ if [ ! -d "$dir_1" ]; then
     echo "Path does not lead to a directory"
     exit 1
 fi
+echo " "
 
 if [ -z "$2" ]
   then
-    echo -e "\nPath to the directory for the 2nd solver: "
+    echo -e "Path to the directory for the 2nd solver: "
     read dir_2
 else
     dir_2=$2
@@ -66,19 +90,21 @@ if [ ! -d "$dir_2" ]; then
     echo "Path does not lead to a directory"
     exit 1
 fi
+echo " "
 
 if [ -z "$3" ]
   then
-    echo -e "\nIn which line is the result written for files of solver 1: "
+    echo -e "In which line is the result written for files of solver 1: "
     read num_line_result_solver_1
 else
     num_line_result_solver_1=$3
 fi
 next_line_result_solver_1=$((num_line_result_solver_1+1))
+echo " "
 
 if [ -z "$4" ]
   then
-    echo -e "\nCheck for empty certificates in YES-result of solver 1 [Y/N]: "
+    echo -e "Check for empty certificates in YES-result of solver 1 [Y/N]: "
     read input_check_cert_YES
 else
     input_check_cert_YES=$4
@@ -94,8 +120,7 @@ if [ "$check_cert_YES" = true ]; then
 else
     echo "check_cert_YES: false"
 fi
-
-
+echo " "
 
 if [ -z "$5" ]
   then
@@ -115,7 +140,7 @@ if [ "$check_cert_NO" = true ]; then
 else
     echo "check_cert_NO: false"
 fi
-
+echo " "
 
 #iterate through files of solver_1
 for FILE in "$dir_1"/*.out; do 
@@ -124,6 +149,7 @@ for FILE in "$dir_1"/*.out; do
 
     #echo $FILE; 
     #echo "${FILE##*/}"
+
     FILE_2=$(find $dir_2 -name "${FILE##*/}")
     #echo $FILE_2
 
@@ -141,6 +167,18 @@ for FILE in "$dir_1"/*.out; do
         echo "Empty File: $FILE"
         ((num_instances_empty_1++))
         is_Empty=true
+    else
+        if [ "$result_1" = "NO" ]; then
+            if [ "$check_cert_NO" = true ]; then
+                Check_Certificate $FILE
+            fi
+        fi
+
+        if [ "$result_1" = "YES" ]; then
+            if [ "$check_cert_YES" = true ]; then
+                Check_Certificate $FILE
+            fi
+        fi
     fi
 
     #read result of solver 2
@@ -171,7 +209,7 @@ for FILE in "$dir_1"/*.out; do
             #solver 1 returned NO and extension
             #get extension from solver 1 (special files)           
             raw_ext=$(sed -n {$next_line_result_solver_1',${p;}'} < $FILE)
-            ext=$(echo $raw_ext | sed s/'\r'//g) # parse extensions in several lines
+            ext=$(echo $raw_ext | sed -e s/'\r'/' '/g -e s/'\n'/' '/g) # parse extensions in several lines
             
             #check if extension in solver 1 is valid
             if [  $(expr length "$ext") -gt 3 ]; then
@@ -189,7 +227,7 @@ for FILE in "$dir_1"/*.out; do
             #solver 2 returned NO and extension
             #get extension from solver 2
             raw_ext_2=$(sed -n '2,${p;}' < $FILE_2) 
-            ext_2=$(echo $raw_ext_2 | sed s/'\r'//g) # parse extensions in several lines
+            ext_2=$(echo $raw_ext_2 | sed -e s/'\r'/' '/g -e s/'\n'/' '/g) # parse extensions in several lines
             
             #check if extension in solver 2 is valid
             if [  $(expr length "$ext_2") -gt 3 ]; then
@@ -212,11 +250,11 @@ for FILE in "$dir_1"/*.out; do
     if [ -z "$raw_ext" ]; then
         continue
     fi
-    ext=$(echo $raw_ext | sed s/'\r'//g) # parse extensions in several lines
+    ext=$(echo $raw_ext | sed -e s/'\r'/' '/g -e s/'\n'/' '/g) # parse extensions in several lines
 
     #get extension from solver 2
     raw_ext_2=$(sed -n '2,${p;}' < $FILE_2)
-    ext_2=$(echo $raw_ext_2 | sed s/'\r'//g) # parse extensions in several lines
+    ext_2=$(echo $raw_ext_2 | sed -e s/'\r'/' '/g -e s/'\n'/' '/g) # parse extensions in several lines
 
     #compare extension
     if [ "$ext" = "$ext_2" ]; then
@@ -247,3 +285,4 @@ echo "Empty files of solver2        [1/total]:                      $num_instanc
 #echo "incorrect solutions solver 1                                  $num_incorrect_solver1"
 #echo "incorrect solutions solver 2                                  $num_incorrect_solver2"
 echo "solver 1 NO solver 2 YES      [1/diff result]                 $num_instance_diff_solver1_NO/$num_diff_result"
+echo "solver 1 empty certificates   [1/total]                       $num_instance_empty_certificate/$num_instances_total"
