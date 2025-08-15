@@ -27,19 +27,9 @@ num_instance_diff_solver1_NO=0
 #//////////////////////////////---- FUNC ----/////////////////////////////////////////////
 #/////////////////////////////////////////////////////////////////////////////////////////
 
-function Check_Extension () {
-    file_out=$1
-    file_raw=${1##*/}
-    dir_prob=$2 
-    file_arg="$dir_prob/${file_raw%??.*}.af.arg"
-    file_i23="$dir_prob/${file_raw%??.*}.i23"
-    #echo "The path to the problem is: $dir_prob"
-    #echo "The arg file name is: $file_arg"
-    #echo "The i23 file name is: $file_i23"
-
-    echo "Checking extension ..."
-    source ./Validate_Ext.sh $file_arg $file_i23 $file_out true
-}
+#function Check_Certificate () {
+    
+#}
 
 
 #/////////////////////////////////////////////////////////////////////////////////////////
@@ -47,7 +37,7 @@ function Check_Extension () {
 #/////////////////////////////////////////////////////////////////////////////////////////
 
 
-
+echo "Validate v4.0"
 
 if [ -z "$1" ]
   then
@@ -77,20 +67,6 @@ if [ ! -d "$dir_2" ]; then
     exit 1
 fi
 
-#if [ -z "$3" ]
-#  then
-#    echo -e "\nPath to the directory of the problems: "
-#    read dir_prob
-#else
-#    dir_prob=$3
-#fi
-## Check if the target is a directory
-#if [ ! -d "$dir_prob" ]; then
-#    echo "$dir_prob"
-#    echo "Path does not lead to a directory"
-#    exit 1
-#fi
-
 if [ -z "$3" ]
   then
     echo -e "\nIn which line is the result written for files of solver 1: "
@@ -100,8 +76,49 @@ else
 fi
 next_line_result_solver_1=$((num_line_result_solver_1+1))
 
+if [ -z "$4" ]
+  then
+    echo -e "\nCheck for empty certificates in YES-result of solver 1 [Y/N]: "
+    read input_check_cert_YES
+else
+    input_check_cert_YES=$4
+fi
+if [[ $input_check_cert_YES == 'Y' ]]
+  then
+    check_cert_YES=true;
+else
+    check_cert_YES=false;
+fi
+if [ "$check_cert_YES" = true ]; then
+    echo "check_cert_YES: true"
+else
+    echo "check_cert_YES: false"
+fi
+
+
+
+if [ -z "$5" ]
+  then
+    echo -e "\nCheck for empty certificates in NO-result of solver 1 [Y/N]: "
+    read input_check_cert_NO
+else
+    input_check_cert_NO=$5
+fi
+if [[ $input_check_cert_NO == 'Y' ]]
+  then
+    check_cert_NO=true;
+else
+    check_cert_NO=false;
+fi
+if [ "$check_cert_NO" = true ]; then
+    echo "check_cert_NO: true"
+else
+    echo "check_cert_NO: false"
+fi
+
+
 #iterate through files of solver_1
-for FILE in "$dir_1"/*; do 
+for FILE in "$dir_1"/*.out; do 
     #count instance
     ((num_instances_total++))
 
@@ -144,7 +161,9 @@ for FILE in "$dir_1"/*; do
     ((num_instances_comp++))
 
     #compare result
-    if [ "$result_1" = "$result_2" ]; then
+    char_1=${result_1:0:1}
+    char_2=${result_2:0:1}
+    if [ "$char_1" = "$char_2" ]; then
         ((num_same_result++))
     else
         if [ "$result_1" = "NO" ]; then
