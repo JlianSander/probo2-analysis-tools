@@ -106,6 +106,11 @@ function Check_Certificate () {
 #//////////////////////////////---- MAIN ----/////////////////////////////////////////////
 #/////////////////////////////////////////////////////////////////////////////////////////
 
+if [ "$no_print" = false ]; then
+    echo "Validate v4.2"
+    echo "for no print use ./validate.sh [path_solver_1] [path_solver_2] 1 N N Y"
+fi
+
 if [ -z "$1" ]
   then
     echo "Path to the directory for the 1st solver: "
@@ -192,8 +197,6 @@ else
 fi
 
 if [ "$no_print" = false ]; then
-    echo "Validate v4.2"
-    echo "for no print use ./validate.sh [path_solver_1] [path_solver_2] 1 N N Y"
     if [ "$check_cert_YES" = true ]; then
         echo "check_cert_YES: true"
     else
