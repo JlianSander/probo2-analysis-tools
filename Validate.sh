@@ -106,6 +106,19 @@ function Check_Certificate () {
 #//////////////////////////////---- MAIN ----/////////////////////////////////////////////
 #/////////////////////////////////////////////////////////////////////////////////////////
 
+if [ -n "$6" ]
+  then
+    input_no_print=$6
+else
+    input_no_print="NO"
+fi
+if [[ ($input_no_print == 'Y') || ($input_no_print == 'YES')]]
+  then
+    no_print=true;
+else
+    no_print=false;
+fi
+
 if [ "$no_print" = false ]; then
     echo "Validate v4.2"
     echo "for no print use ./validate.sh [path_solver_1] [path_solver_2] 1 N N Y"
@@ -179,21 +192,6 @@ if [[ $input_check_cert_NO == 'Y' ]]
     check_cert_NO=true;
 else
     check_cert_NO=false;
-fi
-
-
-
-if [ -n "$6" ]
-  then
-    input_no_print=$6
-else
-    input_no_print="NO"
-fi
-if [[ ($input_no_print == 'Y') || ($input_no_print == 'YES')]]
-  then
-    no_print=true;
-else
-    no_print=false;
 fi
 
 if [ "$no_print" = false ]; then
