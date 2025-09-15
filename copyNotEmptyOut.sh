@@ -15,15 +15,14 @@ num_instances_NotEmpty=0
 echo "Version 1.0"
 echo "created by Julian Sander"
 
-if [ "$#" -ne 5 ]
+if [ "$#" -ne 2 ]
   then
-    echo "copyNotEmpty [path out files] [path files af/arg] [path destination] [file ending af] [file ending arg]"
+    echo "copyNotEmptyOut [path out files] [path destination]"
     exit 1    
 fi
 
 dir_1=$1
 dir_2=$2
-dir_3=$3
 
 #iterate through .out files
 for FILE in "$dir_1"/*.out; do 
@@ -33,17 +32,7 @@ for FILE in "$dir_1"/*.out; do
         #echo "Non-Empty File: $FILE"
         ((num_instances_NotEmpty++))
 
-        FILE_BASENAME=$(basename -- "$FILE")
-        FILE_BASENAME="${FILE_BASENAME%_1.*}"
-        #echo "$FILE_BASENAME"
-        
-        FILE_AF=$(find $dir_2 -name "${FILE_BASENAME}*.$4")
-        #FILE_AF=$(basename -- "$FILE_AF")
-        cp "$FILE_AF" "$dir_3/"
-
-        FILE_ARG=$(find $dir_2 -name "${FILE_BASENAME}*.$5")
-        #FILE_ARG=$(basename -- "$FILE_ARG")
-        cp "$FILE_ARG" "$dir_3/"
+        cp "$FILE" "$dir_2/"
     fi
 done
 
