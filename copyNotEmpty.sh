@@ -6,7 +6,7 @@
 #/////////////////////////////////////////////////////////////////////////////////////////
 
 num_instances=0
-num_instances_empty=0
+num_instances_NotEmpty=0
 
 #/////////////////////////////////////////////////////////////////////////////////////////
 #//////////////////////////////---- MAIN ----/////////////////////////////////////////////
@@ -29,9 +29,9 @@ dir_3=$3
 for FILE in "$dir_1"/*.out; do 
     ((num_instances++))
     result_1=$(sed {1"q;d"} < $FILE)
-    if [ -z "$result_1" ]; then
-        echo "Empty File: $FILE"
-        ((num_instances_empty++))
+    if [ -n "$result_1" ]; then
+        #echo "Non-Empty File: $FILE"
+        ((num_instances_NotEmpty++))
 
         FILE_BASENAME=$(basename -- "$FILE")
         FILE_BASENAME="${FILE_BASENAME%_1.*}"
@@ -47,4 +47,4 @@ for FILE in "$dir_1"/*.out; do
     fi
 done
 
-echo "Empty files:                      $num_instances_empty/$num_instances"
+echo "Non-Empty files:                      $num_instances_NotEmpty/$num_instances"
