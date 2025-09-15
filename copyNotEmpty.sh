@@ -12,7 +12,7 @@ num_instances_NotEmpty=0
 #//////////////////////////////---- MAIN ----/////////////////////////////////////////////
 #/////////////////////////////////////////////////////////////////////////////////////////
 
-echo "Version 1.0"
+echo "Version 1.1"
 echo "created by Julian Sander"
 
 if [ "$#" -ne 5 ]
@@ -37,11 +37,11 @@ for FILE in "$dir_1"/*.out; do
         FILE_BASENAME="${FILE_BASENAME%_1.*}"
         #echo "$FILE_BASENAME"
         
-        FILE_AF=$(find $dir_2 -name "${FILE_BASENAME}*.$4")
+        FILE_AF=$(find $dir_2 -name "${FILE_BASENAME}.$4")
         #FILE_AF=$(basename -- "$FILE_AF")
         cp "$FILE_AF" "$dir_3/"
 
-        FILE_ARG=$(find $dir_2 -name "${FILE_BASENAME}*.$5")
+        FILE_ARG=$(find $dir_2 -name "${FILE_BASENAME}.$5")
         #FILE_ARG=$(basename -- "$FILE_ARG")
         cp "$FILE_ARG" "$dir_3/"
     fi
